@@ -151,16 +151,20 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
     while score0 < goal and score1 < goal:
         if who == 0:
             score0 = score0 + take_turn(strategy0(score0, score1), score1, dice, goal)
+            say = say(score0, score1)
             print("DEBUG:", score0, score1 )
             while score0 < goal and more_boar(score0, score1):
                 score0 = score0 + take_turn(strategy0(score0, score1), score1, dice, goal)
+                say = say(score0, score1)
             if score0 < goal:
                 who = next_player(who)
         print ("DEBUG:", who)
         if who == 1:
             score1 = score1 + take_turn(strategy1(score1, score0), score0, dice, goal)
+            say = say(score0, score1)
             while score1 < goal and more_boar(score1, score0):
                 score1 = score1 + take_turn(strategy1(score1, score0), score0, dice, goal)
+                say = say(score0, score1)
             if score1 < goal:
                 who = next_player(who)        
     # END PROBLEM 5
@@ -251,6 +255,11 @@ def announce_highest(who, last_score=0, running_high=0):
     assert who == 0 or who == 1, 'The who argument should indicate a player.'
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    def say(score0, score1):
+        if who:
+            
+        return announce_highest(who, last_score, running_high)
+    return say
     # END PROBLEM 7
 
 
