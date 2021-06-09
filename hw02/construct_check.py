@@ -61,7 +61,6 @@ _NAMES = {
     'SetComp': '{ ... for ... } (set)',
     'Slice': '[ : ]',
     'Starred': '',
-    'Str': 'str',
     'Sub': '-',
     'Subscript': '[]',
     'Try': 'try',
@@ -175,3 +174,4 @@ class ExclusionChecker(NodeVisitor):
 
         self.visit(p)
         return self._errs == 0
+
