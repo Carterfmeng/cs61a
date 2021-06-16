@@ -1,3 +1,5 @@
+import sys
+
 def mul_recur(m,n):
     if m == 0 or n == 0:
         return 0
@@ -46,3 +48,4 @@ def count_k_recur(n, k):
     else:
         return decre_k(1, k)
 
+print(sys.modules)
