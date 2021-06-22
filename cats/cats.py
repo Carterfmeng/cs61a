@@ -1,6 +1,6 @@
 """Typing test implementation"""
 
-from utils import lower, split, remove_punctuation, lines_from_file
+from utils import count, lower, split, remove_punctuation, lines_from_file
 from ucb import main, interact, trace
 from datetime import datetime
 
@@ -28,7 +28,6 @@ def choose(paragraphs, select, k):
         return ""
 
 
-
 def about(topic):
     """Return a select function that returns whether a paragraph contains one
     of the words in TOPIC.
@@ -42,6 +41,14 @@ def about(topic):
     assert all([lower(x) == x for x in topic]), 'topics should be lowercase.'
     # BEGIN PROBLEM 2
     "*** YOUR CODE HERE ***"
+    def is_about_topic(s):
+        low_s = lower(remove_punctuation(s))
+        for _s in split(low_s):
+            for _topic in topic:
+                if _s == _topic:
+                    return True
+        return False
+    return is_about_topic
     # END PROBLEM 2
 
 
@@ -66,6 +73,15 @@ def accuracy(typed, reference):
     reference_words = split(reference)
     # BEGIN PROBLEM 3
     "*** YOUR CODE HERE ***"
+    if len(typed_words) == 0:
+        return 0.0
+    else:
+        counted_words = 0
+        short_len = min(len(typed_words), len(reference_words))
+        for i in range(short_len):
+            if typed_words[i] == reference_words[i]:
+                counted_words += 1
+        return counted_words * 100 / len(typed_words)
     # END PROBLEM 3
 
 
@@ -74,6 +90,8 @@ def wpm(typed, elapsed):
     assert elapsed > 0, 'Elapsed time must be positive'
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
+    words_num = len(typed) / 5
+    return 60 / elapsed * words_num
     # END PROBLEM 4
 
 
@@ -84,6 +102,23 @@ def autocorrect(user_word, valid_words, diff_function, limit):
     """
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    if user_word in valid_words:
+        return user_word
+    else:
+        words_diff = []
+        for _word in valid_words:
+            words_diff.append(diff_function(user_word, _word, limit))
+        lowest_diff = min(words_diff)
+        try:
+            words_diff.index(lowest_diff)
+        except Exception:
+            return user_word
+        else:
+            lowest_index = words_diff.index(lowest_diff)
+            if words_diff[lowest_index] <= limit:
+                return valid_words[lowest_index]
+            else:
+                return user_word
     # END PROBLEM 5
 
 
@@ -93,31 +128,34 @@ def shifty_shifts(start, goal, limit):
     their lengths.
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    def helper(start, goal, count):
+        if count > limit:
+            return count
+        elif len(start) == 0 or len(goal) == 0:
+            return max(len(goal), len(start))
+        elif start[0] == goal[0]:
+            return helper(start[1:], goal[1:], count)
+        else:
+            return 1 + helper(start[1:], goal[1:], count + 1)
+    return helper(start, goal, 0)
     # END PROBLEM 6
 
 
 def pawssible_patches(start, goal, limit):
     """A diff function that computes the edit distance from START to GOAL."""
-    assert False, 'Remove this line'
-
-    if ______________: # Fill in the condition
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
-    elif ___________: # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
+    if start == goal:
+        return 0
+    elif limit == -1:
+        return 0
+    elif len(start) == 0 or len(goal) == 0:
+        return max(len(start), len(goal))
+    elif start[0] == goal[0]:
+        return pawssible_patches(start[1:], goal[1:], limit)
     else:
-        add_diff = ... # Fill in these lines
-        remove_diff = ...
-        substitute_diff = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+        add_diff = pawssible_patches(start, goal[1:], limit-1) + 1
+        remove_diff = pawssible_patches(start[1:], goal, limit-1) + 1
+        substitute_diff = pawssible_patches(start[1:], goal[1:], limit-1) + 1
+        return min(add_diff, remove_diff, substitute_diff)
 
 
 def final_diff(start, goal, limit):
@@ -134,6 +172,15 @@ def report_progress(typed, prompt, user_id, send):
     """Send a report of your id and progress so far to the multiplayer server."""
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    correct_words = 0
+    for i in range(len(typed)):
+        if typed[i] == prompt[i]:
+            correct_words += 1
+            print("DEBUG:", correct_words, len(prompt))
+        else:
+            break
+    send({'id': user_id, 'progress': correct_words/len(prompt)})
+    return correct_words/len(prompt)
     # END PROBLEM 8
 
 
@@ -160,6 +207,15 @@ def time_per_word(times_per_player, words):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    times = []
+    for i in range(len(times_per_player)):
+        times.append([])
+        print("DEBUG:", times)
+        for j in range(len(times_per_player[i])):
+            if j < len(times_per_player[i]) - 1:
+                times[i].append(times_per_player[i][j+1] - times_per_player[i][j])
+        print("DEBUG:", [words, times])
+    return game(words, times)
     # END PROBLEM 9
 
 
@@ -175,6 +231,22 @@ def fastest_words(game):
     word_indices = range(len(all_words(game)))    # contains an *index* for each word
     # BEGIN PROBLEM 10
     "*** YOUR CODE HERE ***"
+    def find_fastest_player(fastest_time):
+        player_index = 0
+        for p in player_indices:
+            if time(game, p, w) == fastest_time:
+                player_index = p
+                return player_index
+
+    fastest_ls =[[] for p in player_indices]
+
+    for w in word_indices:
+        time_each_word = [time(game, p, w) for p in player_indices]
+        fastest_time = min(time_each_word)
+        fastest_player = find_fastest_player(fastest_time)
+        fastest_ls[fastest_player].append(word_at(game, w))
+    return fastest_ls
+
     # END PROBLEM 10
 
 
