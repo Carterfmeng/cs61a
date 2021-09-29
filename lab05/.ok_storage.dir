@@ -8,3 +8,5 @@
 'coords-correct', (3584, 70)
 'riffle-correct', (4096, 70)
 'add_trees-correct', (4608, 70)
+'build_successors_table-correct', (5120, 70)
+'construct_sent-correct', (5632, 70)
