@@ -307,15 +307,23 @@ def add_trees(t1, t2):
       5
     """
     "*** YOUR CODE HERE ***"
-    if label(t1) and label(t2):
-        return tree(label(t1) + label(t2), [add_trees(b1, b2) for b1, b2 in zip(branches(t1), branches(t2))]
-    elif label(t1) and not label(t2):
-        return tree(label(t1), [])
+    # orders: not > and > or 
+    if not t1:
+        return t2
+    if not t2:
+        return t1
+    
+    new_label = label(t1) + label(t2)
+    t1_branches, t2_branches = branches(t1), branches(t2)
+    len_t1b, len_t2b = len(t1_branches), len(t2_branches)
 
-
-
-        # for b1, b2 in zip(branches(t1), branches(t2)):
-        #     add_trees(b1, b2)
+    if len_t1b < len_t2b:
+        t1_branches += [None for _ in range(len_t1b, len_t2b)]
+    elif len_t2b < len_t1b:
+        t2_branches += [None for _ in range(len_t2b, len_t1b)]
+    
+    return tree(new_label, [add_trees(b1, b2) for b1, b2 in zip(t1_branches, t2_branches)])
+    
 
 
 def build_successors_table(tokens):
