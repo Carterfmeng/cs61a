@@ -200,6 +200,13 @@ def preorder(t):
     [2, 4, 6]
     """
     "*** YOUR CODE HERE ***"
+    branches_list = []
+    if is_leaf(t):
+        return [label(t)]
+    else:
+        for b in branches(t):
+            branches_list += preorder(b)
+        return [label(t)] + branches_list
 
 
 def has_path(t, word):
@@ -209,7 +216,7 @@ def has_path(t, word):
     >>> greetings = tree('h', [tree('i'),
     ...                        tree('e', [tree('l', [tree('l', [tree('o')])]),
     ...                                   tree('y')])])
-    >>> print_tree(greetings)
+    >>> print_tree(greetings) 
     h
       i
       e
@@ -232,6 +239,10 @@ def has_path(t, word):
     """
     assert len(word) > 0, 'no path for empty word.'
     "*** YOUR CODE HERE ***"
+    if label(t) == word:
+        return True
+    else:
+        return label(t) == word[0] and any([has_path(b, word[1:]) for b in branches(t)])
 
 
 def interval(a, b):
