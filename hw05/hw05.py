@@ -187,9 +187,31 @@ def is_bst(t):
     True
     >>> t7 = Tree(2, [Tree(1, [Tree(5)]), Tree(4)])
     >>> is_bst(t7)
-    False
+    True
     """
     "*** YOUR CODE HERE ***"
+    def bst_min(label, left_t):
+        return left_t.label <= label
+    
+    def bst_max(label, right_t):
+        return right_t.label > label
+
+    branch_num = len(t.branches)
+
+    if t.is_leaf():
+        return True
+    if branch_num > 2:
+        return False
+    else:
+        if branch_num == 1:
+            return (bst_min(t.label, t.branches[0]) or bst_max(t.label, t.branches[0])) \
+                and all([is_bst(b) for b in t.branches])
+        else:
+            return bst_min(t.label, t.branches[0]) and bst_max(t.label, t.branches[1]) \
+                and all([is_bst(b) for b in t.branches])
+       
+    
+
 
 
 def preorder(t):
