@@ -27,3 +27,12 @@ def flip_two(lnk):
     >>> lnk
     Link(2, Link(1, Link(4, Link(3, Link(5)))))
     """
+    if lnk.rest is Link.empty:
+        return
+    else:
+        lnk.first, lnk.rest.first = lnk.rest.first, lnk.first
+        flip_two(lnk.rest.rest)
+
+# def return_f(lnk):
+#     flip_two(lnk)
+#     return lnk
