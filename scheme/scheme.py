@@ -2,10 +2,13 @@
 from __future__ import print_function
 from ast import arg
 from cmath import exp
-from hashlib import new  # Python 2 compatibility
+from hashlib import new
+from importlib.abc import TraversableResources
+from pickle import BINGET  # Python 2 compatibility
 
 import sys
 import os
+from unicodedata import bidirectional
 
 from scheme_builtins import *
 from scheme_reader import *
@@ -358,6 +361,16 @@ def do_and_form(expressions, env):
     """
     # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
+    if expressions is nil:
+        return True  
+    else:
+        value = scheme_eval(expressions.first, env)
+        if expressions.rest is nil:
+            return value
+        elif is_false_primitive(value):
+            return False
+        else:
+            return do_and_form(expressions.rest, env)
     # END PROBLEM 12
 
 def do_or_form(expressions, env):
@@ -375,6 +388,16 @@ def do_or_form(expressions, env):
     """
     # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
+    if expressions is nil:
+        return False
+    else:
+        value = scheme_eval(expressions.first, env)
+        if expressions.rest is nil:
+            return value
+        elif is_true_primitive(value):
+            return value
+        else:
+            return do_or_form(expressions.rest, env)
     # END PROBLEM 12
 
 def do_cond_form(expressions, env):
@@ -395,6 +418,10 @@ def do_cond_form(expressions, env):
         if is_true_primitive(test):
             # BEGIN PROBLEM 13
             "*** YOUR CODE HERE ***"
+            if clause.rest is nil:
+                return test
+            else:
+                return eval_all(clause.rest, env)
             # END PROBLEM 13
         expressions = expressions.rest
 
@@ -419,6 +446,13 @@ def make_let_frame(bindings, env):
     names, values = nil, nil
     # BEGIN PROBLEM 14
     "*** YOUR CODE HERE ***"
+    while bindings != nil:
+        validate_form(bindings.first, 2, 2)
+        names = Pair(bindings.first.first, names)
+        values = Pair(scheme_eval(bindings.first.rest.first, env), values)
+        bindings = bindings.rest
+    validate_formals(names)
+    return env.make_child_frame(names, values)
     # END PROBLEM 14
     return env.make_child_frame(names, values)
 
