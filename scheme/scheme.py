@@ -4,6 +4,7 @@ from ast import arg
 from cmath import exp
 from hashlib import new
 from importlib.abc import TraversableResources
+from inspect import formatannotation
 from pickle import BINGET  # Python 2 compatibility
 
 import sys
@@ -579,6 +580,8 @@ class MuProcedure(Procedure):
 
     # BEGIN PROBLEM 18
     "*** YOUR CODE HERE ***"
+    def make_call_frame(self, args, env):
+        return env.make_child_frame(self.formals, args)
     # END PROBLEM 18
 
     def __str__(self):
@@ -595,6 +598,8 @@ def do_mu_form(expressions, env):
     validate_formals(formals)
     # BEGIN PROBLEM 18
     "*** YOUR CODE HERE ***"
+    return MuProcedure(formals, expressions.rest)
+
     # END PROBLEM 18
 
 SPECIAL_FORMS['mu'] = do_mu_form
