@@ -45,26 +45,36 @@
 (define (second-operand p) (caddr p))
 
 (define (derive-sum expr var)
-  'YOUR-CODE-HERE
+    (define deri_1 (derive (first-operand expr) var))
+    (define deri_2 (derive (second-operand expr) var))
+    (make-sum deri_1 deri_2)
 )
 
 (define (derive-product expr var)
-  'YOUR-CODE-HERE
+  (define deri_1 (derive (first-operand expr) var))
+  (define deri_2 (derive (second-operand expr) var))
+  (make-sum (make-product deri_1 (second-operand expr)) (make-product deri_2 (first-operand expr)))
 )
 
 ; Exponentiations are represented as lists that start with ^.
 (define (make-exp base exponent)
-  'YOUR-CODE-HERE
+  (cond ((=number? base 0) 0)
+        ((=number? exponent 0) 1)
+        ((=number? base 1) 1)
+        ((=number? exponent 1) base)
+        ((and (number? base) (number? exponent)) (expt base exponent))
+        (else (list '^ base exponent))
+        )
 )
 
 (define (exp? exp)
-  'YOUR-CODE-HERE
+  (and (list? exp) (eq? (car exp) '^))
 )
 
 (define x^2 (make-exp 'x 2))
 (define x^3 (make-exp 'x 3))
 
 (define (derive-exp exp var)
-  'YOUR-CODE-HERE
+  (make-product (second-operand exp) (make-exp (first-operand exp) (make-sum (second-operand exp) -1)))
 )
 
