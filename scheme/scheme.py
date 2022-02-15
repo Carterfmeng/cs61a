@@ -10,6 +10,7 @@ from pickle import BINGET  # Python 2 compatibility
 import sys
 import os
 from unicodedata import bidirectional
+from unittest import result
 
 from scheme_builtins import *
 from scheme_reader import *
@@ -46,8 +47,12 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
         "*** YOUR CODE HERE ***"
         operator = scheme_eval(first, env)
         validate_procedure(operator)
-        operands = rest.map(lambda temp: scheme_eval(temp, env))
-        return scheme_apply(operator, operands, env)
+        if isinstance(operator, MacroProcedure):
+            result = operator.apply_macro(rest, env)
+            return scheme_eval(result, env)
+        else:
+            operands = rest.map(lambda temp: scheme_eval(temp, env))
+            return scheme_apply(operator, operands, env)
 
         # END PROBLEM 4
 
@@ -469,6 +474,15 @@ def do_define_macro(expressions, env):
     """
     # BEGIN Problem 20
     "*** YOUR CODE HERE ***"
+    validate_form(expressions, 2)
+    exp1 = expressions.first
+    if isinstance(exp1, Pair):
+        name, formals, body = exp1.first, exp1.rest, expressions.rest
+        if scheme_symbolp(name):
+            validate_formals(formals)
+            env.define(name, MacroProcedure(formals, body, env))
+            return name
+    raise SchemeError("invalid macro definition")
     # END Problem 20
 
 
